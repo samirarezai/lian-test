@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { storageKeys } from '@/constants/storage.ts'
+import { queryClient } from '@/helpers/query/index.ts'
 import { queryClientKeys } from '@/helpers/query/queryClientKeys.ts'
 import { readStorage, writeStorage } from '@/helpers/storage.ts'
 import { createLocalUser, mergeUsers, parseDeletedIds, parseLocalUsers } from '@/handler/users.ts'
@@ -38,10 +39,11 @@ export function useUsersDashboard() {
   const deleteUser = (user: DashboardUser) => {
     if (user.source === 'local') {
       setLocalUsers((current) => current.filter((item) => item.id !== user.id))
-      return
+    } else {
+      setDeletedIds((current) => (current.includes(user.id) ? current : [...current, user.id]))
     }
 
-    setDeletedIds((current) => (current.includes(user.id) ? current : [...current, user.id]))
+    void queryClient.invalidateQueries({ queryKey: [queryClientKeys.USER, user.id] })
   }
 
   const users = useMemo(
