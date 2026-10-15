@@ -2,6 +2,10 @@
 
 A responsive user directory. The list is loaded from [JSONPlaceholder](https://jsonplaceholder.typicode.com/users). Search, filter, and sort run in the browser. Users you add or remove are kept in this browser and survive a refresh.
 
+## Demo
+
+[https://lian-wine.vercel.app/](https://lian-wine.vercel.app/)
+
 ## Features
 
 - User list with name, email, and company
