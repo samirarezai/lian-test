@@ -1,35 +1,65 @@
-# React + TypeScript + Vite
+# Users Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A responsive user directory. The list is loaded from [JSONPlaceholder](https://jsonplaceholder.typicode.com/users). Search, filter, and sort run in the browser. Users you add or remove are kept in this browser and survive a refresh.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- User list with name, email, and company
+- Search by name or email
+- Sort by name, email, or company
+- Filter by company and by source (API or added locally)
+- Add a user with form validation (stored locally, not sent to the API)
+- Delete a user locally, including users that originally came from the API
+- User details with name, username, email, phone, address, and company
+- Loading, error, and empty states
+- Light and dark theme, remembered after refresh
+- Layout that works on mobile and desktop
 
-## React Compiler
+## Scripts
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
-
-Note: This will impact Vite dev & build performances.
-You can also try [the experimental native React Compiler support in plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md#rust-react-compiler) by using `compiler: true` in the plugin options instead of using the Babel plugin.
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+pnpm install
+pnpm dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+| Command | Purpose |
+| --- | --- |
+| `pnpm dev` | Start the Vite dev server |
+| `pnpm build` | Typecheck and build for production |
+| `pnpm preview` | Serve the production build |
+| `pnpm lint` | Run Oxlint |
+
+Open the app at `http://localhost:5173`. `/` redirects to `/users`.
+
+## How data works
+
+The directory API does not support server-side search, filter, or sort, so those run on the fetched list.
+
+| Action | Where it goes |
+| --- | --- |
+| Load the list | `GET /users` |
+| Open an API user | `GET /users/:id` |
+| Add a user | `localStorage` only |
+| Delete a user | `localStorage` only (the API is not called) |
+| Theme | `localStorage` |
+
+A user created here has no username, phone, or address. Those fields show as an em dash on the details page. Removing an API user hides that person after refresh; it does not delete them on the server.
+
+## Project structure
+
+```text
+src/
+  components/     Shared UI (button, modal, table states, form fields)
+  constants/      API paths, routes, storage keys
+  handler/        Client-side search, filter, and sort
+  helpers/query/  TanStack Query client and query keys
+  helpers/storage.ts
+  Layout/         App shell
+  loader/         Route loader for user details
+  pages/Users/    List, details, and their components
+  router/         Routes
+  services/       Axios client and user API
+  theme/          Light / dark theme
+```
+
+Path alias `@/` points at `src/`.
